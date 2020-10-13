@@ -38,6 +38,8 @@ public class AdapterNotas extends ArrayAdapter<Nota> {
         ImageButton btnEliminar=fila.findViewById(R.id.btnEliminarFila);
         Nota nota = objects.get(position);
 
+        txtTitulo.setText(nota.getTitulo());
+
         //falta onlcik del textview
 
         return fila;

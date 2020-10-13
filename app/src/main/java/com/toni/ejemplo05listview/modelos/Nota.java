@@ -15,7 +15,7 @@ public class Nota implements Parcelable {
     public Nota() {
     }
 
-    protected Nota(Parcel in) {
+    public Nota(Parcel in) {
         titulo = in.readString();
         contenido = in.readString();
     }
