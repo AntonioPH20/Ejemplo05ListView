@@ -1,5 +1,6 @@
 package com.toni.ejemplo05listview;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -7,6 +8,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.toni.ejemplo05listview.adapters.AdapterNotas;
 import com.toni.ejemplo05listview.modelos.Nota;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -15,6 +17,7 @@ import android.widget.Adapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.IllegalFormatCodePointException;
 
 public class ListadoNotasActivity extends AppCompatActivity {
     //contenedor
@@ -25,6 +28,7 @@ public class ListadoNotasActivity extends AppCompatActivity {
     private ArrayList<Nota> listaNotas;
     //adapter
     private AdapterNotas notasAdapter;
+    private final int ADD_NOTA=0,MODIFICAR_NOTA=1;
 
 
     @Override
@@ -35,25 +39,47 @@ public class ListadoNotasActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         contenedor=findViewById(R.id.contenedorNotas);
+        //XML plantilla
         fila=R.layout.fila_nota;
         listaNotas=new ArrayList<>();
         notasAdapter=new AdapterNotas(this,fila,listaNotas);
         contenedor.setAdapter(notasAdapter);
 
-        crearNotasInicial();
+        //crearNotasInicial();
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+               startActivityForResult(new Intent(ListadoNotasActivity.this, AddNotaActivity.class),ADD_NOTA);
+
             }
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode==ADD_NOTA && resultCode == RESULT_OK){
+            if (data!=null){
+                Nota nota=data.getExtras().getParcelable("NOTA");
+                listaNotas.add(nota);
+                notasAdapter.notifyDataSetChanged();
+            }
+        }
+
+        if (requestCode==MODIFICAR_NOTA && resultCode == RESULT_OK){
+            Nota nota= data.getExtras().getParcelable("NOTA");
+            int posicion= data.getExtras().getInt("POS");
+            if (nota!=null){
+                listaNotas.set(posicion,nota);
+                notasAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
     private void crearNotasInicial() {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 30; i++) {
             Nota nota=new Nota("Titulo "+i,"Contenido");
             listaNotas.add(nota);
 
